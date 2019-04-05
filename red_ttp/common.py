@@ -101,7 +101,7 @@ def execute(command, hide_log=False, mute=False, timeout=30, wait=True, kill=Fal
     if kill:
         delta = 0.5
         # Try waiting for the process to die
-        for _ in xrange(int(timeout / delta) + 1):
+        for _ in range(int(timeout / delta) + 1):
             time.sleep(delta)
             if p.poll() is not None:
                 return
@@ -114,10 +114,11 @@ def execute(command, hide_log=False, mute=False, timeout=30, wait=True, kill=Fal
             pass
     elif wait:
         output = ''
-        p.stdin.write(os.linesep)
+        p.stdin.write(os.linesep.encode())
         while p.poll() is None:
             line = p.stdout.readline()
             if line:
+                line = line.decode()
                 output += line
                 if not (hide_log or mute):
                     print(line.rstrip())
@@ -186,7 +187,7 @@ def serve_web(ip=LOCAL_IP, port=None, directory=BASE_DIR):
         server = socketserver.TCPServer((ip, port), handler)
     else:
         # Otherwise, try to find a port
-        for port in xrange(8000, 9000):
+        for port in range(8000, 9000):
             try:
                 server = socketserver.TCPServer((ip, port), handler)
                 break
@@ -264,7 +265,7 @@ def find_remote_host():
 
     if len(pending) > 0:
         # See which ones return first with a success code, and use that host
-        for _ in xrange(20):
+        for _ in range(20):
             for hostname, pending_process in sorted(pending.items()):
                 if pending_process.poll() is None:
                     pending_process.stdin.write(os.linesep)
