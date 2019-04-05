@@ -116,14 +116,13 @@ def execute(command, hide_log=False, mute=False, timeout=30, wait=True, kill=Fal
         output = ''
         p.stdin.write(os.linesep.encode())
         while p.poll() is None:
-            line = p.stdout.readline()
+            line = p.stdout.readline().decode()
             if line:
-                line = line.decode()
                 output += line
                 if not (hide_log or mute):
                     print(line.rstrip())
 
-        output += p.stdout.read()
+        output += p.stdout.read().decode()
         output = output.strip()
 
         # Add artificial sleep to slow down command lines
@@ -361,6 +360,6 @@ def print_file(path):
     else:
         print('-' * 16)
         with open(path, 'rb') as f:
-            print(f.read().rstrip())
+            print(f.read().decode().rstrip())
 
     print('')
