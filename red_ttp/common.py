@@ -65,7 +65,7 @@ def dependencies(*paths):
         @functools.wraps(f)
         def decorated(*args, **kwargs):
             if len(missing):
-                log("Missing dependencies for %s:%s()" % (f.func_code.co_filename, f.func_code.co_name), "!")
+                log("Missing dependencies for %s:%s()" % (f.__code__.co_filename, f.__code__.co_name), "!")
                 for dep in missing:
                     print("    - %s" % os.path.relpath(dep, BASE_DIR))
                 return MISSING_DEPENDENCIES
@@ -213,7 +213,7 @@ def patch_file(source_file, old_bytes, new_bytes, target_file=None):
                                                 target_file, binascii.b2a_hex(new_bytes)))
 
     with open(source_file, "rb") as f:
-        contents = f.read()
+        contents = f.read().decode()
 
     patched = contents.replace(old_bytes, new_bytes)
 
@@ -226,14 +226,14 @@ def patch_regex(source_file, regex, new_bytes, target_file=None):
     log("Patching by regex %s --> %s" % (source_file, target_file))
 
     with open(source_file, "rb") as f:
-        contents = f.read()
+        contents = f.read().decode()
 
     matches = re.findall(regex, contents)
     log("Changing %s -> %s" % (', '.join(matches), new_bytes))
     contents = re.sub(regex, new_bytes, contents)
 
     with open(target_file, "wb") as f:
-        f.write(contents)
+        f.write(contents.encode())
 
 
 def wchar(s):

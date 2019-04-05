@@ -16,9 +16,9 @@ def main():
     common.log("PowerShell Suspicious Commands")
     temp_script = os.path.abspath("tmp.ps1")
 
-    # Create an empty script     
+    # Create an empty script
     with open(temp_script, "wb") as f:
-        f.write("whoami.exe\n")
+        f.write("whoami.exe\n".encode())
 
     powershell_commands = [
         'powershell -encoded %s' % encode('ping google.com'),
