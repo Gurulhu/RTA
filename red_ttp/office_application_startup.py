@@ -4,7 +4,7 @@
 # Description: Modifies the registry to persist a DLL on Office Startup.
 
 import common
-import _winreg as winreg
+import winreg
 import sys
 import time
 

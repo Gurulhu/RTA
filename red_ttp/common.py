@@ -2,15 +2,16 @@ import subprocess
 import socket
 import time
 import threading
-import SimpleHTTPServer
+import http.server
 import binascii
 import shutil
 import sys
-import SocketServer
+import socketserver
 import re
 import os
 import getpass
 import functools
+
 
 
 try:
@@ -80,7 +81,7 @@ def get_path(*path):
 def execute(command, hide_log=False, mute=False, timeout=30, wait=True, kill=False, drop=False, shell=False):
     """Execute a process and get the output."""
     if isinstance(command, list):
-        command = subprocess.list2cmdline([unicode(arg) for arg in command])
+        command = subprocess.list2cmdline([str(arg) for arg in command])
 
     if not hide_log:
         print("%s > %s" % (HOSTNAME, command))
@@ -179,15 +180,15 @@ def clear_web_cache():
 
 
 def serve_web(ip=LOCAL_IP, port=None, directory=BASE_DIR):
-    handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    handler = http.server.SimpleHTTPRequestHandler
 
     if port is not None:
-        server = SocketServer.TCPServer((ip, port), handler)
+        server = socketserver.TCPServer((ip, port), handler)
     else:
         # Otherwise, try to find a port
         for port in xrange(8000, 9000):
             try:
-                server = SocketServer.TCPServer((ip, port), handler)
+                server = socketserver.TCPServer((ip, port), handler)
                 break
             except socket.error:
                 pass

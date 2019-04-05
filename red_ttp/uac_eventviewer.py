@@ -4,7 +4,7 @@
 # Description: Modifies the Registry value to change the handler for MSC files, bypassing UAC.
 
 import sys
-import _winreg as winreg
+import winreg
 import common
 
 # Default machine value:

@@ -3,7 +3,7 @@
 # ATT&CK: T1015, T1103
 # Description: Creates registry persistence for mock malware in Run and RunOnce keys, Services and debuggers.
 
-import _winreg as wreg
+import winreg
 import time
 import common
 
@@ -15,18 +15,18 @@ def pause():
 
 
 def write_reg_string(hive, key, value, data, delete=True):
-    hkey = wreg.CreateKey(hive, key)
+    hkey = winreg.CreateKey(hive, key)
     key = key.rstrip('\\')
     common.log("Writing to registry %s\\%s -> %s" % (key, value, data))
-    wreg.SetValueEx(hkey, value, 0, wreg.REG_SZ, data)
-    stored, code = wreg.QueryValueEx(hkey, value)
+    winreg.SetValueEx(hkey, value, 0, winreg.REG_SZ, data)
+    stored, code = winreg.QueryValueEx(hkey, value)
     if data != stored:
         common.log("Wrote %s but retrieved %s" % (data, stored), log_type="-")
 
     if delete:
         pause()
         common.log("Removing %s\\%s" % (key, value), log_type="-")
-        wreg.DeleteValue(hkey, value)
+        winreg.DeleteValue(hkey, value)
 
     hkey.Close()
     pause()
@@ -37,39 +37,39 @@ def write_reg_string(hive, key, value, data, delete=True):
 def main():
     common.log("Suspicious Registry Persistence")
 
-    for hive in (wreg.HKEY_LOCAL_MACHINE, wreg.HKEY_CURRENT_USER):
+    for hive in (winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER):
         write_reg_string(hive, "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\", "RunOnceTest", TARGET_APP)
         write_reg_string(hive, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", "RunTest", TARGET_APP)
 
     # create Services subkey for "ServiceTest"
     common.log("Creating ServiceTest registry key")
-    hkey = wreg.CreateKey(wreg.HKEY_LOCAL_MACHINE, "System\\CurrentControlSet\\Services\\ServiceTest\\")
+    hkey = winreg.CreateKey(winreg.HKEY_LOCAL_MACHINE, "System\\CurrentControlSet\\Services\\ServiceTest\\")
 
     # create "ServiceTest" data values
     common.log("Updating ServiceTest metadata")
-    wreg.SetValueEx(hkey, "Description", 0, wreg.REG_SZ, "A fake service")
-    wreg.SetValueEx(hkey, "DisplayName", 0, wreg.REG_SZ, "ServiceTest Service")
-    wreg.SetValueEx(hkey, "ImagePath", 0, wreg.REG_SZ, "c:\\ServiceTest.exe")
-    wreg.SetValueEx(hkey, "ServiceDLL", 0, wreg.REG_SZ, "C:\\ServiceTest.dll")
+    winreg.SetValueEx(hkey, "Description", 0, winreg.REG_SZ, "A fake service")
+    winreg.SetValueEx(hkey, "DisplayName", 0, winreg.REG_SZ, "ServiceTest Service")
+    winreg.SetValueEx(hkey, "ImagePath", 0, winreg.REG_SZ, "c:\\ServiceTest.exe")
+    winreg.SetValueEx(hkey, "ServiceDLL", 0, winreg.REG_SZ, "C:\\ServiceTest.dll")
 
     # modify contents of ServiceDLL and ImagePath
     common.log("Modifying ServiceTest binary")
-    wreg.SetValueEx(hkey, "ImagePath", 0, wreg.REG_SZ, "c:\\ServiceTestMod.exe")
-    wreg.SetValueEx(hkey, "ServiceDLL", 0, wreg.REG_SZ, "c:\\ServiceTestMod.dll")
+    winreg.SetValueEx(hkey, "ImagePath", 0, winreg.REG_SZ, "c:\\ServiceTestMod.exe")
+    winreg.SetValueEx(hkey, "ServiceDLL", 0, winreg.REG_SZ, "c:\\ServiceTestMod.dll")
 
     hkey.Close()
     pause()
 
     # delete Service subkey for "ServiceTest"
     common.log("Removing ServiceTest", log_type="-")
-    hkey = wreg.CreateKey(wreg.HKEY_LOCAL_MACHINE, "System\\CurrentControlSet\\Services\\")
-    wreg.DeleteKeyEx(hkey, "ServiceTest")
+    hkey = winreg.CreateKey(winreg.HKEY_LOCAL_MACHINE, "System\\CurrentControlSet\\Services\\")
+    winreg.DeleteKeyEx(hkey, "ServiceTest")
 
     hkey.Close()
     pause()
 
     # Additional persistence
-    hklm = wreg.HKEY_LOCAL_MACHINE
+    hklm = winreg.HKEY_LOCAL_MACHINE
     common.log("Adding AppInit DLL")
     windows_base = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows\\"
     write_reg_string(hklm, windows_base, "AppInit_Dlls", "evil.dll", delete=False)
@@ -84,7 +84,7 @@ def main():
     for victim in debugger_targets:
         common.log("Registering Image File Execution Options debugger for %s -> %s" % (victim, TARGET_APP))
         base_key = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\%s" % victim
-        write_reg_string(wreg.HKEY_LOCAL_MACHINE, base_key, "Debugger", TARGET_APP, delete=True)
+        write_reg_string(winreg.HKEY_LOCAL_MACHINE, base_key, "Debugger", TARGET_APP, delete=True)
 
 
 if __name__ == "__main__":

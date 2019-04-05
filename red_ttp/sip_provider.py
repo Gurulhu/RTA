@@ -4,7 +4,7 @@
 # Description: Registers a mock SIP provider to bypass code integrity checks and execute mock malware.
 
 import os
-import _winreg as winreg
+import winreg
 import common
 
 

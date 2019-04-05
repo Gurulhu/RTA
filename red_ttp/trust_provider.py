@@ -4,7 +4,7 @@
 # Description: Substitutes an invalid code authentication policy, enabling trust policy bypass.
 
 import os
-import _winreg as winreg
+import winreg
 import common
 
 FINAL_POLICY_KEY = "Software\\Microsoft\\Cryptography\\providers\\trust\\FinalPolicy\\{00AAC56B-CD44-11D0-8CC2-00C04FC295EE}"

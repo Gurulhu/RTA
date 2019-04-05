@@ -3,7 +3,7 @@
 # ATT&CK: T1122
 # Description: Modifies the Registry to create a new user-defined COM broker, "scrobj.dll".
 
-import _winreg as winreg
+import winreg
 import common
 
 
@@ -19,7 +19,7 @@ def main():
     winreg.DeleteValue(hkey, "")
     winreg.DeleteKey(hkey, "")
     winreg.CloseKey(hkey)
-    
+
     hkey = winreg.CreateKey(winreg.HKEY_CURRENT_USER, "SOFTWARE\\Classes\\CLSID")
     winreg.DeleteKey(hkey, "{00000000-0000-0000-0000-0000DEADBEEF}")
     winreg.CloseKey(hkey)
