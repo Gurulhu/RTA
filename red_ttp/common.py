@@ -213,7 +213,7 @@ def patch_file(source_file, old_bytes, new_bytes, target_file=None):
                                                 target_file, binascii.b2a_hex(new_bytes)))
 
     with open(source_file, "rb") as f:
-        contents = f.read().decode()
+        contents = f.read()
 
     patched = contents.replace(old_bytes, new_bytes)
 

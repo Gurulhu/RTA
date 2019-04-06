@@ -9,7 +9,7 @@ import base64
 
 
 def encode(command):
-    return base64.b64encode(command.encode('utf-16le'))
+    return base64.b64encode(command.encode('utf-16le')).decode()
 
 
 def main():

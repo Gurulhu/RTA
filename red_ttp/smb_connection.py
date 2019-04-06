@@ -16,7 +16,7 @@ def main(ip=common.LOCAL_IP):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip, 445))
     common.log("Sending HELLO")
-    s.send("HELLO!")
+    s.send("HELLO!".encode())
     common.log("Shutting down the conection...")
     s.close()
     common.log("Closed connection to {}:{}".format(ip, SMB_PORT))
@@ -24,4 +24,3 @@ def main(ip=common.LOCAL_IP):
 
 if __name__ == "__main__":
     exit(main(*sys.argv[1:]))
-
